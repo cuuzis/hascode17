@@ -4,9 +4,8 @@ import java.util.Scanner;
 
 public class Read
 {
-    public Read() {}
 
-    public ArrayList<String> readFile(String fileName)
+    public static ArrayList<String> readFile(String fileName)
     {
         ArrayList<String> array=new ArrayList<String>();
         try
@@ -25,6 +24,7 @@ public class Read
         {
             System.out.println("Exception occurred "+e);
         }
+        System.out.println(fileName + ".in read");
         return array;
     }
 }
