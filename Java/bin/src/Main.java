@@ -23,7 +23,7 @@ public class Main
         // Logic goes here
 
 
-        String[] firstLine=fileLines.get(0).split(" ");
+        String[] firstLine=fileLines.get(1).split(" ");
         videos=Integer.parseInt(firstLine[0]);
         endpoints=Integer.parseInt(firstLine[1]);
         requests=Integer.parseInt(firstLine[2]);
