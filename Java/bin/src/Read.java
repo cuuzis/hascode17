@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Read
 {
@@ -6,14 +8,14 @@ public class Read
 
     public ArrayList<String> readFile(String fileName)
     {
-        ArrayList<String> array=new ArrayList<String>;
-        Scanner scan;
+        ArrayList<String> array=new ArrayList<String>();
         try
         {
-            scan=new Scanner(new File(fileName));
+            Scanner scan=new Scanner(new File(fileName));
             String line=null;
-            while((line=scan.hasNext())!=null)
+            while((line=scan.nextLine())!=null)
                 array.add(line);
+            scan.close();
         }
         catch(FileNotFoundException e)
         {
@@ -22,10 +24,6 @@ public class Read
         catch(Exception e)
         {
             System.out.println("Exception occurred "+e);
-        }
-        finally
-        {
-            scan.close();
         }
         return array;
     }
