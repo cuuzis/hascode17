@@ -5,30 +5,40 @@ import java.util.ArrayList;
 
 public class Main
 {
-
     public static void main(String[] args)
     {
-        doWork("example");
-        //doWork("small");
-        //doWork("medium");
-        //doWork("big");
+        // Small problem
+        doWork("me_at_the_zoo");
+        //doWork("Data/kittens");
+        //doWork("trending_today");
+        //doWork("videos_worth_spreading");
     }
 
-    static void doWork(String filename) {
+    static void doWork(String filename)
+    {
+        int videos, endpoints, requests, cache_servers, capacity;
         ArrayList<String> fileLines = Read.readFile(filename + ".in");
 
 
         // Logic goes here
 
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename + ".out"))) {
+        String[] firstLine=fileLines.get(1).split(" ");
+        videos=Integer.parseInt(firstLine[0]);
+        endpoints=Integer.parseInt(firstLine[1]);
+        requests=Integer.parseInt(firstLine[2]);
+        cache_servers=Integer.parseInt(firstLine[3]);
+        capacity=Integer.parseInt(firstLine[4]);
+        System.out.println("# of videos: "+videos+"\n#of endpoints: "+endpoints+"\n#of requests: "+requests+"\n# of cache servers: "+cache_servers+"\ncapacity of each cache server: "+capacity);
+
+ /*       try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename + ".out"))) {
 
             //Result is saved here
-            //bw.write("Test\n");
+            bw.write("Test\n");
 
             System.out.println("Saved to " + filename + ".out");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+   */ }
 }
