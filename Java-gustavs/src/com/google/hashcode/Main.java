@@ -37,10 +37,8 @@ public class Main {
             final int cacheCount = Integer.parseInt(nums[3]);
             final int cacheSize = Integer.parseInt(nums[4]);
 
-
             for (int cacheId = 0; cacheId < cacheCount; cacheId++)
                 caches.put(cacheId, new Cache(cacheSize));
-
 
             // videoSizes[id] = size (MB)
             videoSizes = new int[videoCount];
@@ -85,7 +83,7 @@ public class Main {
                 totalRequests += requestTimes;
             }
 
-            //Process
+            // input check
             /*System.out.println("Video sizes (MB)");
             System.out.println(Arrays.toString(videoSizes));
             System.out.println("Endpoints (id: data center latency)");
@@ -110,25 +108,27 @@ public class Main {
             });*/
 
 
-            // Calculations
-            // 1. for each cache, find best video to store (weight = videoRequests * saved ms / additional space % used )
-            // -- for each connected endpoint, for each video
-            // --- see current video play speed
-            // --- calculate benefit if played from cache
-            // --- add benefit to list in cache
-            //
-            // 2. for each cache, while cache is not full:
-            // add best video to stored in cache
-            // update video play speed in connected endpoints
-            // go to next cache
+            // Computation
 
-
-            //calcualate initial video "benefit" potential
+            // A) for each cache:
+            //  get all videos requested by endpoints connected to it
+            //  calculate benefit for storing each single video and save it in cache.bestVideos
+            //  benefit = videoRequests * saved ms
+            //  for getting the best video later, (videoRequests * saved ms / video size) is used
             caches.forEach((cacheId, cache) -> {
                 cache.calculateBenefits();
             });
 
-
+            // B) fill caches:
+            //  take 1st cache,
+            //  put the video with the best benefit
+            //    for each endpoint that requests this video and is connected to this cache:
+            //      update this video's request latency
+            //      update this video's storage benefit for all other caches connected to the endpoint
+            //  go to next cache
+            //  put the video with the best benefit
+            //  ..
+            //  repeat until all caches are full
             while (true) {
                 long savedTimeBefore = savedTime;
                 caches.forEach((cacheId, cache) -> {
@@ -139,35 +139,7 @@ public class Main {
                     break;
             }
 
-
-            //put videos, one for each cache
-            /*while (true) {
-                int savedTimeBefore = savedTime;
-                for (Map.Entry<Integer, Cache> entry : caches.entrySet()) {
-                    int cacheId = entry.getKey();
-                    Cache cache = entry.getValue();
-                    savedTime += cache.putBestVideo();
-                }
-                if (savedTimeBefore == savedTime)
-                    break;
-            }*/
-
-            /*caches.forEach((cacheId, cache) -> {
-                int[] result = getBestVideo(cache);
-                int videoId = result[0];
-                int savedMilis = result[1];
-                savedTime += savedMilis;
-
-                cache.putVideo(videoId);
-            });*/
-
-
-
-            /*for (Map.Entry<Integer, Cache> entry : caches.entrySet()) {
-                int key = entry.getKey();
-                Cache value = entry.getValue();
-            }*/
-
+            // save results
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename + ".out"))) {
                 int cachesUsed = 0;
                 for (Cache cache: caches.values()) {
@@ -188,7 +160,7 @@ public class Main {
                     }
                 }
                 System.out.println("Saved " + cachesUsed + " caches to " + filename + ".out");
-                System.out.println("Predicted result: " + (savedTime * 1000 / totalRequests) );
+                System.out.println("Predicted result: " + (savedTime * 1000 / totalRequests) ); // way off from google's results
                 System.out.println("Total requests: " + totalRequests);
             } catch (IOException e) {
                 System.out.println("Write error!");

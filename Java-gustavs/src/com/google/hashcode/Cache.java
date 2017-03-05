@@ -38,9 +38,6 @@ public class Cache {
                             benefit += endpointTimeSaved * endpointVideoRequest.requestTimes;
                             // updates best video benefits of endpoint connected caches
                             endpoint.caches.forEach((cacheId, cache) -> {
-                            /*for (Map.Entry<Integer, Cache> cEntry : endpoint.caches.entrySet()) {
-                                int cacheId = cEntry.getKey();
-                                Cache cache = cEntry.getValue();*/
                                 if (cache.bestVideos.containsKey(videoId)) {
                                     int cacheBenefit = cache.bestVideos.get(videoId);
                                     cacheBenefit -= (endpointTimeSaved * endpointVideoRequest.requestTimes);
@@ -50,8 +47,6 @@ public class Cache {
                                         cache.bestVideos.put(videoId, cacheBenefit);
                                 }
                             });
-                            // endpoint time saved = ...
-                            // endpoint.caches -> if has best video, then best video benefit -= endpoint time saved
                         }
                     }
                 };
@@ -78,13 +73,17 @@ public class Cache {
     }
 
     // http://stackoverflow.com/questions/11647889/sorting-the-mapkey-value-in-descending-order-based-on-the-value
-    // sorts best videos by time saved (ignores memory)
+    // sorts best videos by time saved, takes into account memory used
     static <K,V extends Comparable<? super V>>
-    List<Map.Entry<K, V>> entriesSortedByValues(Map<K,V> map) {
-        List<Map.Entry<K,V>> sortedEntries = new ArrayList<Map.Entry<K,V>>(map.entrySet());
-        Collections.sort(sortedEntries,
-                (e1, e2) -> e2.getValue().compareTo(e1.getValue())
-        );
+    List<Map.Entry<Integer, Integer>> entriesSortedByValues(Map<Integer, Integer> map) {
+        List<Map.Entry<Integer, Integer>> sortedEntries = new ArrayList<>(map.entrySet());
+        Collections.sort(sortedEntries, (e1, e2) -> {
+            int video1size = Main.videoSizes[e1.getKey()];
+            int video2size = Main.videoSizes[e2.getKey()];
+            Integer e1benefit = e1.getValue() / video1size;
+            Integer e2benefit = e2.getValue() / video2size;
+            return e2benefit.compareTo(e1benefit);
+        });
         return sortedEntries;
     }
 }
